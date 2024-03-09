@@ -3,10 +3,12 @@ from pyppeteer import launch
 from pyppeteer_stealth import stealth
 from bs4 import BeautifulSoup
 import re
-from pydash import uniq,sample
+from pydash import uniq,sample,find
+import requests
+from pprint import pprint
+
 
 from constants import WATER_MARK,BASE_URL
-
 
 class TikTokVideo:
     def __init__(self):
@@ -33,18 +35,26 @@ class TikTokVideo:
             data.append(match.group(1))
         return uniq(data)
     
-    def getUrlWaterMark(self,videId):
-        return f'https://{sample(WATER_MARK)}/aweme/v1/feed/?aweme_id={videId}'
-    
+    def getInfoByVideoId(self,videId):
+        videUrl=fr'https://{sample(WATER_MARK)}/aweme/v1/feed/?aweme_id={videId}'
+        response =requests.get(videUrl)
+        if(response.status_code == 200):           
+            dataVideo=find(response.json()['aweme_list'],lambda item:item['aweme_id']==videId)
+            if dataVideo==None:
+                return {}
+       
+       
 
-          
-        
-
+            return {
+                'videId':videId,
+                'desc':dataVideo['desc']
+            }
+            pprint(dataVideo['image_post_info'])
 
 
 async def main():
     vd = TikTokVideo()
-    print(vd.getUrlWaterMark('6951395225445158146'))
+    vd.getInfoByVideoId('6951395225445158146')
 
 
    
