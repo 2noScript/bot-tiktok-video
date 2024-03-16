@@ -37,19 +37,25 @@ class TikTokVideo:
     
     def getInfoByVideoId(self,videId):
         videUrl=fr'https://{sample(WATER_MARK)}/aweme/v1/feed/?aweme_id={videId}'
+        print(videUrl)
         response =requests.get(videUrl)
-        if(response.status_code == 200):           
-            dataVideo=find(response.json()['aweme_list'],lambda item:item['aweme_id']==videId)
-            if dataVideo==None:
-                return {}
-       
-       
+        if(response.status_code == 200):
+            try:       
+                dataVideo=find(response.json()['aweme_list'],lambda item:item['aweme_id']==videId)
+                if dataVideo==None:
+                    return {}
+        
+        
+                pprint(dataVideo)
+            except :
+                self.getInfoByVideoId(videId)
+                
 
-            return {
-                'videId':videId,
-                'desc':dataVideo['desc']
-            }
-            pprint(dataVideo['image_post_info'])
+            
+            # return {
+            #     'videId':videId,
+            #     'desc':dataVideo['desc']
+            # }
 
 
 async def main():
