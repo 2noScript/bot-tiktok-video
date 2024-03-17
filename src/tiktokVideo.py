@@ -40,27 +40,24 @@ class TikTokVideo:
         print(videUrl)
         response =requests.get(videUrl)
         if(response.status_code == 200):
-            try:       
-                dataVideo=find(response.json()['aweme_list'],lambda item:item['aweme_id']==videId)
-                if dataVideo==None:
-                    return {}
-        
-        
-                pprint(dataVideo)
-            except :
-                self.getInfoByVideoId(videId)
-                
-
-            
-            # return {
-            #     'videId':videId,
-            #     'desc':dataVideo['desc']
-            # }
+               
+            data=find(response.json()['aweme_list'],lambda item:item['aweme_id']==videId)
+            if data==None:
+                return {} 
+            return {
+                'videId':videId,
+                'desc':data['desc'],
+                'videoUrl':data['video']['play_addr']['url_list'],
+                'audioUrl':data['music']['play_url']['uri'],
+                'cover':data['video']['cover']['url_list']
+            }
 
 
 async def main():
     vd = TikTokVideo()
-    vd.getInfoByVideoId('6951395225445158146')
+    result=vd.getInfoByVideoId('6951395225445158146')
+    pprint(result)
+
 
 
    
